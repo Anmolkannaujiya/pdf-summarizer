@@ -20,7 +20,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 app.secret_key = secrets.token_hex(16)  # Secure random secret key
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 ALLOWED_EXTENSIONS = {'pdf'}
 
 # Configure Gemini API
@@ -61,77 +61,45 @@ def safe_remove_file(filepath):
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
-    flash('File too large. Maximum file size is 200MB.')
-    return redirect(url_for('upload_file'))
+    flash('File too large. Maximum file size is 16MB.')
+    return redirect(url_for('landing'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def landing():
+    return render_template('landing.html')
+
+@app.route('/index.html', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        logger.info("Received POST request")
-        
-        # Check if a file was uploaded
         if 'file' not in request.files:
-            logger.error("No file part in request")
             flash('No file part')
             return redirect(request.url)
-        
         file = request.files['file']
-        logger.info(f"Received file: {file.filename}")
-        
-        # Check if a file was selected
         if file.filename == '':
-            logger.error("No selected file")
             flash('No selected file')
             return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
+        if file and file.filename.endswith('.pdf'):
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            logger.info(f"File will be saved to: {filepath}")
+            file.save(filepath)
             
             try:
-                # Save the file
-                file.save(filepath)
-                logger.info(f"File saved successfully: {filepath}")
-                
-                # Verify file exists
-                if not os.path.exists(filepath):
-                    raise FileNotFoundError(f"File was not saved properly: {filepath}")
-                
-                # Extract and summarize text
-                logger.info("Starting text extraction")
                 text = extract_text_from_pdf(filepath)
-                logger.info("Text extraction completed")
+                if not text.strip():
+                    flash('No text could be extracted from the PDF. Please ensure it contains text content.')
+                    return redirect(request.url)
                 
-                logger.info("Starting summarization")
                 summary = summarize_text(text)
-                logger.info("Summarization completed")
-                
-                # Clean up the uploaded file
-                safe_remove_file(filepath)
-                
+                os.remove(filepath)  # Clean up the uploaded file
                 return render_template('result.html', summary=summary)
-            
-            except FileNotFoundError as e:
-                logger.error(f"File not found error: {str(e)}")
-                flash(f'Error: {str(e)}')
-                return redirect(request.url)
-            except ValueError as e:
-                logger.error(f"Value error: {str(e)}")
-                safe_remove_file(filepath)
-                flash(str(e))
-                flash('Please try uploading a PDF with actual text content, not scanned images.')
-                return redirect(request.url)
             except Exception as e:
-                logger.error(f"Unexpected error: {str(e)}")
-                safe_remove_file(filepath)
                 flash(f'Error processing PDF: {str(e)}')
+                if os.path.exists(filepath):
+                    os.remove(filepath)
                 return redirect(request.url)
-        
-        logger.error(f"Invalid file type: {file.filename}")
-        flash('Invalid file type. Please upload a PDF file.')
-        return redirect(request.url)
-    
+        else:
+            flash('Please upload a PDF file')
+            return redirect(request.url)
     return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
@@ -200,6 +168,10 @@ def chat():
     except Exception as e:
         logger.error(f"Chat endpoint error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - PDF Summarizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --secondary-color: #94a3b8;
+            --accent-color: #f59e0b;
+            --background-color: rgba(15, 23, 42, 0.95);
+            --card-background: rgba(30, 41, 59, 0.7);
+            --text-color: #e2e8f0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            min-height: 100vh;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .glass-card {
+            background: var(--card-background);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            padding: 3rem;
+            margin: 2rem 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            color: var(--text-color) !important;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+
+        .navbar-brand {
+            color: var(--text-color) !important;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        .navbar {
+            background: var(--card-background);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border-radius: 12px !important;
+        }
+
+        .list-group-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        h1, h2, h3 {
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--secondary-color);
+            line-height: 1.8;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            border: 3px solid var(--accent-color);
+            object-fit: cover;
+        }
+
+        .team-member h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .team-member p {
+            color: var(--secondary-color);
+            font-style: italic;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-color);
+            margin: 1rem auto;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h3 {
+            margin: 1.5rem 0;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-book-open me-2"></i>PDF Summarizer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index.html"><i class="fas fa-upload me-1"></i>Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/about"><i class="fas fa-info-circle me-1"></i>About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="glass-card">
+            <h1 class="text-center mb-4 section-title">About PDF Summarizer</h1>
+            <div class="row">
+                <div class="col-md-4 feature-card">
+                    <i class="fas fa-file-pdf feature-icon"></i>
+                    <h3>PDF Processing</h3>
+                    <p>Upload and process PDF documents with ease. Our system extracts text content efficiently.</p>
+                </div>
+                <div class="col-md-4 feature-card">
+                    <i class="fas fa-robot feature-icon"></i>
+                    <h3>AI-Powered Summaries</h3>
+                    <p>Leveraging advanced AI technology to generate accurate and concise summaries of your documents.</p>
+                </div>
+                <div class="col-md-4 feature-card">
+                    <i class="fas fa-comments feature-icon"></i>
+                    <h3>Interactive Chat</h3>
+                    <p>Ask questions about your documents and get instant answers powered by AI.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h2 class="text-center mb-4 section-title">How It Works</h2>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Upload your PDF document</li>
+                <li class="list-group-item">Our system extracts the text content</li>
+                <li class="list-group-item">AI generates a comprehensive summary</li>
+                <li class="list-group-item">Interact with the summary through our chat interface</li>
+            </ol>
+        </div>
+
+        <div class="glass-card">
+            <h2 class="text-center mb-4 section-title">Our Team</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/150" alt="Anmol Kannaujiya">
+                        <h3>Anmol Kannaujiya</h3>
+                        <p>Lead Developer</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/150" alt="Sathyam Jaiswal">
+                        <h3>Sathyam Jaiswal</h3>
+                        <p>Backend Developer</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="team-member">
+                        <img src="https://via.placeholder.com/150" alt="Rajan Yadav">
+                        <h3>Rajan Yadav</h3>
+                        <p>Frontend Developer</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
