@@ -152,6 +152,15 @@
             margin-right: auto;
         }
 
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
         .chat-input-group {
             display: flex;
             gap: 0.5rem;
@@ -253,7 +262,7 @@
     <script>
         // Store the summary from the template
         const summary = `{{ summary }}`;
-        let chatHistory = [];
+        let isProcessing = false;
 
         function startChat() {
             document.getElementById('chatSection').style.display = 'block';
@@ -269,7 +278,18 @@
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
+        function showError(message) {
+            const chatHistory = document.getElementById('chatHistory');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            chatHistory.appendChild(errorDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
         async function sendMessage() {
+            if (isProcessing) return;
+            
             const chatInput = document.getElementById('chatInput');
             const message = chatInput.value.trim();
             
@@ -278,6 +298,7 @@
             // Add user message to chat
             addMessage(message);
             chatInput.value = '';
+            isProcessing = true;
             
             try {
                 const response = await fetch('/chat', {
@@ -293,7 +314,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -307,13 +329,15 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                addMessage('Error connecting to server. Please try again.', false);
+                showError(error.message || 'Error connecting to server. Please try again.');
+            } finally {
+                isProcessing = false;
             }
         }
 
         // Handle Enter key in chat input
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !isProcessing) {
                 sendMessage();
             }
         });
