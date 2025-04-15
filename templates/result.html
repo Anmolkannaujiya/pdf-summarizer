@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart PDF Summary & Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #7c3aed;
+            --secondary-color: #9ca3af;
+            --accent-color: #facc15;
+            --background-color: rgba(243, 244, 246, 0.7);
+            --card-background: rgba(255, 255, 255, 0.2);
+            --text-color: #111827;
+            --modal-background: rgba(255, 255, 255, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #d1d5db, #e5e7eb);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-color);
+            backdrop-filter: blur(5px);
+        }
+
+        .navbar {
+            background: var(--card-background);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .main-container {
+            flex: 1;
+            padding: 2rem 1rem;
+        }
+
+        .summary-card {
+            background: var(--card-background);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+        }
+
+        .summary-header {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-header i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .summary-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-action:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+
+        .btn-action i {
+            font-size: 1.1rem;
+        }
+
+        .chat-container {
+            background: var(--card-background);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chat-message {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            max-width: 80%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background: rgba(229, 231, 235, 0.5);
+            color: var(--text-color);
+            margin-right: auto;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .chat-input {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            padding: 0.75rem;
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        footer {
+            background: var(--card-background);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 576px) {
+            .summary-card {
+                padding: 1.5rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot"></i>
+                Smart Summarizer
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="container">
+            <div class="summary-card">
+                <h1 class="summary-header">
+                    <i class="fas fa-file-alt"></i>
+                    PDF Summary
+                </h1>
+                <div class="summary-content">
+                    {{ summary }}
+                </div>
+                <div class="action-buttons">
+                    <a href="{{ url_for('upload_file') }}" class="btn-action">
+                        <i class="fas fa-arrow-left"></i>
+                        Upload Another
+                    </a>
+                    <button class="btn-action" onclick="startChat()">
+                        <i class="fas fa-comments"></i>
+                        Ask Questions
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-container" id="chatSection" style="display: none;">
+                <h2 class="summary-header">
+                    <i class="fas fa-comments"></i>
+                    Chat with Summary
+                </h2>
+                <div id="chatHistory" class="mb-3"></div>
+                <div class="chat-input-group">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask a question about the summary...">
+                    <button class="btn-action" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">© 2025 Smart Summarizer. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Store the summary from the template
+        const summary = `{{ summary }}`;
+        let chatHistory = [];
+
+        function startChat() {
+            document.getElementById('chatSection').style.display = 'block';
+            document.getElementById('chatInput').focus();
+        }
+
+        function addMessage(message, isUser = true) {
+            const chatHistory = document.getElementById('chatHistory');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message);
+            chatInput.value = '';
+            
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        summary: summary
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Add bot response to chat
+                addMessage(data.response, false);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('Error connecting to server. Please try again.', false);
+            }
+        }
+
+        // Handle Enter key in chat input
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 
